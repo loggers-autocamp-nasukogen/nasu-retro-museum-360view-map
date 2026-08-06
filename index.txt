@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>360° Virtual Map Viewer</title>
+  
+  <!-- Pannellum CDN (360度パノラマビューアー) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #f3f3f3;
+    }
+
+    /* 全体マップコンテナ */
+    .map-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      background-color: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .map-container {
+      position: relative;
+      width: 100%;
+      /* マップのアスペクト比維持用（例: 16:9） */
+      padding-top: 56.25%; 
+      background-image: url('images/map.webp'); /* 全体マップ画像 (WebP) */
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* ピンのスタイル */
+    .spot-pin {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      margin-left: -18px;
+      margin-top: -36px;
+      background-image: url('images/pin.webp'); /* ピンアイコン (WebP) */
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      z-index: 10;
+    }
+
+    .spot-pin:hover {
+      transform: scale(1.25);
+      filter: drop-shadow(0px 4px 8px rgba(0,255,200,0.8));
+    }
+
+    /* ツールチップ（スポット名表示） */
+    .spot-pin::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      margin-bottom: 4px;
+    }
+
+    .spot-pin:hover::after {
+      opacity: 1;
+    }
+
+    /* モーダル表示エリア */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      position: relative;
+      width: 90%;
+      max-width: 1000px;
+      height: 80vh;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 12px 20px;
+      background: #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      color: #ff5555;
+    }
+
+    #panorama-container {
+      width: 100%;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>360° バーチャルマップ</h1>
+  </header>
+
+  <div class="map-wrapper">
+    <!-- 全体マップ表示エリア (背景に map.webp を使用) -->
+    <div class="map-container" id="mapContainer"></div>
+  </div>
+
+  <!-- 360度ビューアー表示モーダル -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">360° View</span>
+        <button class="close-btn" id="closeBtn">&times;</button>
+      </div>
+      <div id="panorama-container"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====================================================
+    // 全体マップ・ピン・360度パノラマ写真データ設定
+    // ※ すべての画像ファイルを `.webp` 形式で指定しています
+    // ====================================================
+    const mapConfig = {
+      // 全体マップおよびピン画像
+      mapImage: 'images/map.webp',
+      pinImage: 'images/pin.webp',
+
+      // 20箇所の撮影ポイント設定 (座標: x%, y%)
+      spots: [
+        { id: 1,  name: "ポイント 01", x: 12.5, y: 35.0, panorama: "images/360/spot01.webp" },
+        { id: 2,  name: "ポイント 02", x: 22.0, y: 48.0, panorama: "images/360/spot02.webp" },
+        { id: 3,  name: "ポイント 03", x: 31.5, y: 25.0, panorama: "images/360/spot03.webp" },
+        { id: 4,  name: "ポイント 04", x: 40.0, y: 62.0, panorama: "images/360/spot04.webp" },
+        { id: 5,  name: "ポイント 05", x: 48.5, y: 38.0, panorama: "images/360/spot05.webp" },
+        { id: 6,  name: "ポイント 06", x: 55.0, y: 70.0, panorama: "images/360/spot06.webp" },
+        { id: 7,  name: "ポイント 07", x: 62.0, y: 22.0, panorama: "images/360/spot07.webp" },
+        { id: 8,  name: "ポイント 08", x: 70.5, y: 55.0, panorama: "images/360/spot08.webp" },
+        { id: 9,  name: "ポイント 09", x: 78.0, y: 30.0, panorama: "images/360/spot09.webp" },
+        { id: 10, name: "ポイント 10", x: 85.0, y: 65.0, panorama: "images/360/spot10.webp" },
+        { id: 11, name: "ポイント 11", x: 15.0, y: 75.0, panorama: "images/360/spot11.webp" },
+        { id: 12, name: "ポイント 12", x: 28.0, y: 82.0, panorama: "images/360/spot12.webp" },
+        { id: 13, name: "ポイント 13", x: 38.0, y: 18.0, panorama: "images/360/spot13.webp" },
+        { id: 14, name: "ポイント 14", x: 50.0, y: 85.0, panorama: "images/360/spot14.webp" },
+        { id: 15, name: "ポイント 15", x: 65.0, y: 42.0, panorama: "images/360/spot15.webp" },
+        { id: 16, name: "ポイント 16", x: 73.0, y: 80.0, panorama: "images/360/spot16.webp" },
+        { id: 17, name: "ポイント 17", x: 82.0, y: 15.0, panorama: "images/360/spot17.webp" },
+        { id: 18, name: "ポイント 18", x: 88.0, y: 45.0, panorama: "images/360/spot18.webp" },
+        { id: 19, name: "ポイント 19", x: 92.0, y: 78.0, panorama: "images/360/spot19.webp" },
+        { id: 20, name: "ポイント 20", x: 50.0, y: 50.0, panorama: "images/360/spot20.webp" }
+      ]
+    };
+
+    let pannellumViewer = null;
+
+    // DOM要素の生成と初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      const mapContainer = document.getElementById('mapContainer');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalTitle = document.getElementById('modalTitle');
+      const closeBtn = document.getElementById('closeBtn');
+
+      // 1. ピンを動的に配置
+      mapConfig.spots.forEach(spot => {
+        const pin = document.createElement('div');
+        pin.className = 'spot-pin';
+        pin.style.left = spot.x + '%';
+        pin.style.top = spot.y + '%';
+        pin.setAttribute('data-name', spot.name);
+
+        // ピンをクリックした際の処理
+        pin.addEventListener('click', () => {
+          openPanoramaModal(spot);
+        });
+
+        mapContainer.appendChild(pin);
+      });
+
+      // 2. 360度パノラマビューアーの表示
+      function openPanoramaModal(spot) {
+        modalTitle.textContent = spot.name;
+        modalOverlay.classList.add('active');
+
+        // 既存ビューアーの破棄
+        if (pannellumViewer) {
+          pannellumViewer.destroy();
+        }
+
+        // Pannellumインスタンス作成 (WebP形式のパノラマ画像を読み込み)
+        pannellumViewer = pannellum.viewer('panorama-container', {
+          "type": "equirectangular",
+          "panorama": spot.panorama, // images/360/spotXX.webp
+          "autoLoad": true,
+          "compass": false,
+          "showZoomCtrl": true
+        });
+      }
+
+      // 3. モーダルを閉じる処理
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+        if (pannellumViewer) {
+          pannellumViewer.destroy();
+          pannellumViewer = null;
+        }
+      }
+
+      closeBtn.addEventListener('click', closeModal);
+
+      // 背景エリアクリックでモーダルを閉じる
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

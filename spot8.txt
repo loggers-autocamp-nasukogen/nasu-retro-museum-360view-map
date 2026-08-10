@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スポット01 | 360°ビュー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      touch-action: manipulation;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      background-color: #f0f4f1;
+    }
+
+    /* 戻るボタン */
+    #back-button {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #333;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 100;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    #back-button:hover {
+      background: #555;
+    }
+
+    /* ハンバーガーメニュー */
+    #menu-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      z-index: 15;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* 折りたたみメニュー本体 */
+    #zone-menu {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255,255,255,0.95);
+      padding: 10px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      z-index: 15;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+    }
+
+    button {
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .zone-a { background-color: #2E7D32; }
+    .zone-b { background-color: #8D6E63; }
+    .zone-c { background-color: #283593; }
+    .zone-d { background-color: #BF360C; }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    @media screen and (min-width: 768px) {
+      #zone-menu {
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        width: auto;
+        background-color: rgba(255,255,255,0.9);
+        flex-direction: column;
+        padding: 12px;
+        border-radius: 12px;
+      }
+
+      #menu-toggle {
+        top: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 戻るボタン（1ページ目のマップへ移動） -->
+  <a id="back-button" href="index.html">🔙 MAPに戻る</a>
+
+  <!-- ハンバーガーメニュー -->
+  <div id="menu-toggle" onclick="toggleMenu()">☰ 📷カメラ選択</div>
+
+  <!-- 折りたたみメニュー（同エリア内の周辺視点切替） -->
+  <div id="zone-menu">
+    <button class="zone-a" onclick="switchScene('a')">スポット01 中央</button>
+    <button class="zone-b" onclick="switchScene('b')">スポット01 奥</button>
+    <button class="zone-c" onclick="switchScene('c')">スポット01 入口</button>
+  </div>
+
+  <!-- A-Frame 360度パノラマ表示領域 -->
+  <a-scene embedded vr-mode-ui="enabled: false" xr-mode-ui="enabled: false">
+    <a-assets>
+      <img id="sky-a" src="images/360/spot1.webp">
+      <img id="sky-b" src="images/360/spot1_sub1.webp">
+      <img id="sky-c" src="images/360/spot1_sub2.webp">
+    </a-assets>
+    <a-sky id="sky" src="#sky-a" rotation="0 -90 0"></a-sky>
+    <a-entity id="camera" camera look-controls="smoothingFactor: 0.01" position="0 1.6 0"></a-entity>
+  </a-scene>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('zone-menu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function switchScene(zone) {
+      const sky = document.querySelector('#sky');
+      const camera = document.querySelector('#camera');
+
+      switch (zone) {
+        case 'a':
+          sky.setAttribute('src', '#sky-a');
+          break;
+        case 'b':
+          sky.setAttribute('src', '#sky-b');
+          break;
+        case 'c':
+          sky.setAttribute('src', '#sky-c');
+          break;
+      }
+      if (camera) {
+        camera.setAttribute('position', '0 1.6 0');
+      }
+    }
+  </script>
+</body>
+</html>

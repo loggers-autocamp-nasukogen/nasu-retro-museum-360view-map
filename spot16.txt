@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スポット16 | 那須 昭和レトロ館 360°バーチャル案内</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    html, body {
+      height: 100%; margin: 0; overflow: hidden; touch-action: manipulation;
+      font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'M PLUS Rounded 1c', sans-serif;
+      background-color: #2B2B2B; color: #2B2B2B;
+    }
+    #back-button {
+      position: absolute; top: 12px; left: 12px; background: #D00000; color: #F7F4EF;
+      border: 2px solid #E6A100; padding: 8px 18px; border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); font-size: 15px; font-weight: 700;
+      cursor: pointer; z-index: 100; text-decoration: none; display: inline-block;
+      letter-spacing: 0.05em; transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    #back-button:hover { background: #b30000; transform: scale(1.05); }
+    #menu-toggle {
+      position: fixed; top: 12px; right: 12px; background-color: #E6A100; color: #2B2B2B;
+      border: 2px solid #2B2B2B; padding: 8px 18px; border-radius: 20px;
+      font-size: 15px; font-weight: 700; z-index: 15; cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); letter-spacing: 0.05em; transition: transform 0.2s ease;
+    }
+    #menu-toggle:hover { transform: scale(1.05); }
+    #zone-menu {
+      position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(247, 244, 239, 0.96);
+      border-top: 4px solid #1B3B5F; padding: 14px; display: none; flex-wrap: wrap;
+      justify-content: center; gap: 10px; z-index: 15; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+    }
+    button {
+      padding: 10px 18px; font-size: 14px; font-weight: 700; font-family: 'Zen Maru Gothic', sans-serif;
+      border: none; border-radius: 14px; cursor: pointer; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+    .spot-1 { background-color: #D00000; color: #F7F4EF; }
+    .spot-2 { background-color: #2B2B2B; color: #F7F4EF; }
+    .spot-3 { background-color: #1B3B5F; color: #F7F4EF; }
+    .spot-4 { background-color: #E6A100; color: #2B2B2B; }
+    .spot-5 { background-color: #F7F4EF; color: #2B2B2B; border: 2px solid #2B2B2B; }
+    button:hover { transform: translateY(-3px) scale(1.03); filter: brightness(1.08); }
+    @media screen and (min-width: 768px) {
+      #zone-menu {
+        position: absolute; top: 60px; right: 12px; left: auto; width: auto;
+        background-color: rgba(247, 244, 239, 0.96); border: 3px solid #1B3B5F;
+        flex-direction: column; padding: 16px; border-radius: 16px;
+      }
+      #menu-toggle { top: 12px; right: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <a id="back-button" href="index.html">🔙 全体図へ戻る</a>
+  <div id="menu-toggle" onclick="toggleMenu()">📷 スポット切替</div>
+  <div id="zone-menu">
+    <button class="spot-1" onclick="switchScene('16')">スポット 16</button>
+    <button class="spot-2" onclick="switchScene('17')">スポット 17</button>
+    <button class="spot-3" onclick="switchScene('18')">スポット 18</button>
+    <button class="spot-4" onclick="switchScene('19')">スポット 19</button>
+    <button class="spot-5" onclick="switchScene('20')">スポット 20</button>
+  </div>
+  <a-scene embedded vr-mode-ui="enabled: false" xr-mode-ui="enabled: false">
+    <a-assets>
+      <img id="sky-16" src="images/spot16.webp">
+      <img id="sky-17" src="images/spot17.webp">
+      <img id="sky-18" src="images/spot18.webp">
+      <img id="sky-19" src="images/spot19.webp">
+      <img id="sky-20" src="images/spot20.webp">
+    </a-assets>
+    <a-sky id="sky" src="#sky-16" rotation="0 -90 0"></a-sky>
+    <a-entity id="camera" camera look-controls="smoothingFactor: 0.01" position="0 1.6 0"></a-entity>
+  </a-scene>
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('zone-menu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    }
+    function switchScene(spotNum) {
+      const sky = document.querySelector('#sky');
+      const camera = document.querySelector('#camera');
+      sky.setAttribute('src', '#sky-' + spotNum);
+      if (camera) { camera.setAttribute('position', '0 1.6 0'); }
+    }
+  </script>
+</body>
+</html>

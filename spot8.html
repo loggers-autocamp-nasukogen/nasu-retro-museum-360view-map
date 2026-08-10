@@ -2,161 +2,90 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スポット08 | 360°ビュー</title>
+  <title>スポット08 | 那須 昭和レトロ館 360°バーチャル案内</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <style>
     html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      touch-action: manipulation;
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      background-color: #f0f4f1;
+      height: 100%; margin: 0; overflow: hidden; touch-action: manipulation;
+      font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'M PLUS Rounded 1c', sans-serif;
+      background-color: #2B2B2B; color: #2B2B2B;
     }
-
-    /* 戻るボタン */
     #back-button {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: #333;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      font-size: 16px;
-      cursor: pointer;
-      z-index: 100;
-      text-decoration: none;
-      display: inline-block;
+      position: absolute; top: 12px; left: 12px; background: #D00000; color: #F7F4EF;
+      border: 2px solid #E6A100; padding: 8px 18px; border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); font-size: 15px; font-weight: 700;
+      cursor: pointer; z-index: 100; text-decoration: none; display: inline-block;
+      letter-spacing: 0.05em; transition: transform 0.2s ease, background-color 0.2s ease;
     }
-
-    #back-button:hover {
-      background: #555;
-    }
-
-    /* ハンバーガーメニュー */
+    #back-button:hover { background: #b30000; transform: scale(1.05); }
     #menu-toggle {
-      position: fixed;
-      top: 12px;
-      right: 12px;
-      background-color: #333;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 16px;
-      z-index: 15;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      position: fixed; top: 12px; right: 12px; background-color: #E6A100; color: #2B2B2B;
+      border: 2px solid #2B2B2B; padding: 8px 18px; border-radius: 20px;
+      font-size: 15px; font-weight: 700; z-index: 15; cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); letter-spacing: 0.05em; transition: transform 0.2s ease;
     }
-
-    /* 折りたたみメニュー本体 */
+    #menu-toggle:hover { transform: scale(1.05); }
     #zone-menu {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(255,255,255,0.95);
-      padding: 10px;
-      display: none;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      z-index: 15;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.2);
+      position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(247, 244, 239, 0.96);
+      border-top: 4px solid #1B3B5F; padding: 14px; display: none; flex-wrap: wrap;
+      justify-content: center; gap: 10px; z-index: 15; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
     }
-
     button {
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      color: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      transition: transform 0.3s ease, background-color 0.3s ease;
+      padding: 10px 18px; font-size: 14px; font-weight: 700; font-family: 'Zen Maru Gothic', sans-serif;
+      border: none; border-radius: 14px; cursor: pointer; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
-
-    .zone-a { background-color: #2E7D32; }
-    .zone-b { background-color: #8D6E63; }
-    .zone-c { background-color: #283593; }
-
-    button:hover {
-      transform: scale(1.05);
-    }
-
+    .spot-1 { background-color: #D00000; color: #F7F4EF; }
+    .spot-2 { background-color: #2B2B2B; color: #F7F4EF; }
+    .spot-3 { background-color: #1B3B5F; color: #F7F4EF; }
+    .spot-4 { background-color: #E6A100; color: #2B2B2B; }
+    .spot-5 { background-color: #F7F4EF; color: #2B2B2B; border: 2px solid #2B2B2B; }
+    button:hover { transform: translateY(-3px) scale(1.03); filter: brightness(1.08); }
     @media screen and (min-width: 768px) {
       #zone-menu {
-        position: absolute;
-        top: 60px;
-        left: 20px;
-        width: auto;
-        background-color: rgba(255,255,255,0.9);
-        flex-direction: column;
-        padding: 12px;
-        border-radius: 12px;
+        position: absolute; top: 60px; right: 12px; left: auto; width: auto;
+        background-color: rgba(247, 244, 239, 0.96); border: 3px solid #1B3B5F;
+        flex-direction: column; padding: 16px; border-radius: 16px;
       }
-
-      #menu-toggle {
-        top: 20px;
-        right: 20px;
-      }
+      #menu-toggle { top: 12px; right: 12px; }
     }
   </style>
 </head>
 <body>
-
-  <!-- 戻るボタン -->
-  <a id="back-button" href="index.html">🔙 MAPに戻る</a>
-
-  <!-- ハンバーガーメニュー -->
-  <div id="menu-toggle" onclick="toggleMenu()">☰ 📷カメラ選択</div>
-
-  <!-- 折りたたみメニュー -->
+  <a id="back-button" href="index.html">🔙 全体図へ戻る</a>
+  <div id="menu-toggle" onclick="toggleMenu()">📷 スポット切替</div>
   <div id="zone-menu">
-    <button class="zone-a" onclick="switchScene('a')">スポット08 中央</button>
-    <button class="zone-b" onclick="switchScene('b')">スポット08 奥</button>
-    <button class="zone-c" onclick="switchScene('c')">スポット08 入口</button>
+    <button class="spot-1" onclick="switchScene('06')">スポット 06</button>
+    <button class="spot-2" onclick="switchScene('07')">スポット 07</button>
+    <button class="spot-3" onclick="switchScene('08')">スポット 08</button>
+    <button class="spot-4" onclick="switchScene('09')">スポット 09</button>
+    <button class="spot-5" onclick="switchScene('10')">スポット 10</button>
   </div>
-
-  <!-- A-Frame 360度パノラマ表示領域 -->
   <a-scene embedded vr-mode-ui="enabled: false" xr-mode-ui="enabled: false">
     <a-assets>
-      <!-- spot08.webp にパスを変更 -->
-      <img id="sky-a" src="images/spot08.webp">
-      <img id="sky-b" src="images/spot08_sub1.webp">
-      <img id="sky-c" src="images/spot08_sub2.webp">
+      <img id="sky-06" src="images/spot06.webp">
+      <img id="sky-07" src="images/spot07.webp">
+      <img id="sky-08" src="images/spot08.webp">
+      <img id="sky-09" src="images/spot09.webp">
+      <img id="sky-10" src="images/spot10.webp">
     </a-assets>
-    <a-sky id="sky" src="#sky-a" rotation="0 -90 0"></a-sky>
+    <a-sky id="sky" src="#sky-08" rotation="0 -90 0"></a-sky>
     <a-entity id="camera" camera look-controls="smoothingFactor: 0.01" position="0 1.6 0"></a-entity>
   </a-scene>
-
   <script>
     function toggleMenu() {
       const menu = document.getElementById('zone-menu');
       menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
     }
-
-    function switchScene(zone) {
+    function switchScene(spotNum) {
       const sky = document.querySelector('#sky');
       const camera = document.querySelector('#camera');
-
-      switch (zone) {
-        case 'a':
-          sky.setAttribute('src', '#sky-a');
-          break;
-        case 'b':
-          sky.setAttribute('src', '#sky-b');
-          break;
-        case 'c':
-          sky.setAttribute('src', '#sky-c');
-          break;
-      }
-      if (camera) {
-        camera.setAttribute('position', '0 1.6 0');
-      }
+      sky.setAttribute('src', '#sky-' + spotNum);
+      if (camera) { camera.setAttribute('position', '0 1.6 0'); }
     }
   </script>
 </body>

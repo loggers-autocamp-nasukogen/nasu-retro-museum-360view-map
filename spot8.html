@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スポット01 | 360°ビュー</title>
+  <title>スポット08 | 360°ビュー</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <style>
@@ -82,7 +82,6 @@
     .zone-a { background-color: #2E7D32; }
     .zone-b { background-color: #8D6E63; }
     .zone-c { background-color: #283593; }
-    .zone-d { background-color: #BF360C; }
 
     button:hover {
       transform: scale(1.05);
@@ -109,25 +108,26 @@
 </head>
 <body>
 
-  <!-- 戻るボタン（1ページ目のマップへ移動） -->
+  <!-- 戻るボタン -->
   <a id="back-button" href="index.html">🔙 MAPに戻る</a>
 
   <!-- ハンバーガーメニュー -->
   <div id="menu-toggle" onclick="toggleMenu()">☰ 📷カメラ選択</div>
 
-  <!-- 折りたたみメニュー（同エリア内の周辺視点切替） -->
+  <!-- 折りたたみメニュー -->
   <div id="zone-menu">
-    <button class="zone-a" onclick="switchScene('a')">スポット01 中央</button>
-    <button class="zone-b" onclick="switchScene('b')">スポット01 奥</button>
-    <button class="zone-c" onclick="switchScene('c')">スポット01 入口</button>
+    <button class="zone-a" onclick="switchScene('a')">スポット08 中央</button>
+    <button class="zone-b" onclick="switchScene('b')">スポット08 奥</button>
+    <button class="zone-c" onclick="switchScene('c')">スポット08 入口</button>
   </div>
 
   <!-- A-Frame 360度パノラマ表示領域 -->
   <a-scene embedded vr-mode-ui="enabled: false" xr-mode-ui="enabled: false">
     <a-assets>
-      <img id="sky-a" src="images/360/spot1.webp">
-      <img id="sky-b" src="images/360/spot1_sub1.webp">
-      <img id="sky-c" src="images/360/spot1_sub2.webp">
+      <!-- spot08.webp にパスを変更 -->
+      <img id="sky-a" src="images/360/spot08.webp">
+      <img id="sky-b" src="images/360/spot08_sub1.webp">
+      <img id="sky-c" src="images/360/spot08_sub2.webp">
     </a-assets>
     <a-sky id="sky" src="#sky-a" rotation="0 -90 0"></a-sky>
     <a-entity id="camera" camera look-controls="smoothingFactor: 0.01" position="0 1.6 0"></a-entity>

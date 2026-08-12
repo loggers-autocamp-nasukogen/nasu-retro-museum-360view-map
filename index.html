@@ -165,63 +165,6 @@
       <a class="spot-pin" data-name="スポット 28" href="spot28.html" style="left: 24%; top: 43%;">📷28</a></div>
   </div>
 
-  <script>
-    // ====================================================
-    // spot1 ～ spot28 の設定データ
-    // ====================================================
-    const mapConfig = {
-      spots: [
-        { id: 1,  name: "スポット 01", x: 10.0, y: 20.0, url: "spot1.html" },
-        { id: 5,  name: "スポット 05", x: 30.0, y: 35.0, url: "spot5.html" },
-        { id: 6,  name: "スポット 06", x: 35.0, y: 50.0, url: "spot6.html" },
-        { id: 7,  name: "スポット 07", x: 40.0, y: 45.0, url: "spot7.html" },
-        { id: 8,  name: "スポット 08", x: 45.0, y: 60.0, url: "spot8.html" },
-        { id: 9,  name: "スポット 09", x: 50.0, y: 30.0, url: "spot9.html" },
-        { id: 10, name: "スポット 10", x: 55.0, y: 65.0, url: "spot10.html" },
-        { id: 11, name: "スポット 11", x: 60.0, y: 25.0, url: "spot11.html" },
-        { id: 12, name: "スポット 12", x: 65.0, y: 55.0, url: "spot12.html" },
-        { id: 13, name: "スポット 13", x: 70.0, y: 35.0, url: "spot13.html" },
-        { id: 14, name: "スポット 14", x: 75.0, y: 70.0, url: "spot14.html" },
-        { id: 15, name: "スポット 15", x: 80.0, y: 40.0, url: "spot15.html" },
-        { id: 16, name: "スポット 16", x: 85.0, y: 75.0, url: "spot16.html" },
-        { id: 17, name: "スポット 17", x: 90.0, y: 30.0, url: "spot17.html" },
-        { id: 18, name: "スポット 18", x: 15.0, y: 70.0, url: "spot18.html" },
-        { id: 19, name: "スポット 19", x: 22.0, y: 80.0, url: "spot19.html" },
-        { id: 20, name: "スポット 20", x: 32.0, y: 75.0, url: "spot20.html" },
-        { id: 21, name: "スポット 21", x: 42.0, y: 85.0, url: "spot21.html" },
-        { id: 22, name: "スポット 22", x: 52.0, y: 80.0, url: "spot22.html" },
-        { id: 23, name: "スポット 23", x: 62.0, y: 85.0, url: "spot23.html" },
-        { id: 24, name: "スポット 24", x: 72.0, y: 80.0, url: "spot24.html" },
-        { id: 25, name: "スポット 25", x: 82.0, y: 85.0, url: "spot25.html" },
-        { id: 26, name: "スポット 26", x: 88.0, y: 50.0, url: "spot26.html" },
-        { id: 27, name: "スポット 27", x: 92.0, y: 65.0, url: "spot27.html" },
-        { id: 28, name: "スポット 28", x: 95.0, y: 80.0, url: "spot28.html" }
-      ]
-    };
-
-// DOM要素の生成と初期化
-document.addEventListener('DOMContentLoaded', () => {
-  const mapContainer = document.getElementById('mapContainer');
-
-  // ピン（📷XX ボタン）を動的に28箇所生成
-  mapConfig.spots.forEach(spot => {
-    const pin = document.createElement('a');
-    pin.className = 'spot-pin';
-    pin.style.left = spot.x + '%';
-    pin.style.top = spot.y + '%';
-    
-    // IDを2桁ゼロ埋め表記（例: 1 -> 📷01）
-    const formattedId = String(spot.id).padStart(2, '0');
-    pin.textContent = `📷${formattedId}`;
-    
-    pin.setAttribute('data-name', spot.name);
-    pin.href = spot.url;
-
-    mapContainer.appendChild(pin);
-  });
-});
-  </script>
-
 
 <div id="scrnli_recorder_root"><template shadowrootmode="open"><div><style></style><div data-v-7aad2230="" class="app-root"><!----></div><style>.app-drawing-canvas{pointer-events:none;cursor:default;position:absolute;top:0;left:0}.app-drawing-canvas.active{pointer-events:all;cursor:crosshair}
 .app-bubble-clicker .bubble{position:absolute;top:0;left:0;z-index:99999999;width:26px;height:26px;transform:scale(0);opacity:0;background:red;border-radius:50%}.app-bubble-clicker .bubble.show{animation:.6s ease 0s infinite bubble}@keyframes bubble{0%{transform:scale(0);opacity:0}30%{transform:scale(1);opacity:.6}60%{transform:scale(1);opacity:.6}100%{transform:scale(0);opacity:0}}

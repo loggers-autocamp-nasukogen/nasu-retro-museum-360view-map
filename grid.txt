@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>座標確認用グリッド画像生成（1080x1500）</title>
+  <style>
+    body {
+      background: #222;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    canvas {
+      border: 1px solid #555;
+      max-width: 100%;
+      height: auto;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #E6A100;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #ffbe26; }
+  </style>
+</head>
+<body>
+
+  <h1>1080 × 1500 座標目盛グリッド生成</h1>
+  <canvas id="gridCanvas" width="1080" height="1500"></canvas>
+  <br>
+  <button onclick="downloadPNG()">PNG画像として保存</button>
+
+  <script>
+    const canvas = document.getElementById('gridCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = 1080;
+    const height = 1500;
+
+    // 背景（透明度を持たせた黒）
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.fillRect(0, 0, width, height);
+
+    // 10%刻みのグリッド描画 (%)
+    ctx.lineWidth = 1;
+    ctx.font = 'bold 20px Arial';
+
+    // 縦線（横軸 %）
+    for (let x = 0; x <= 100; x += 5) {
+      const px = (x / 100) * width;
+      const isMain = x % 10 === 0;
+
+      ctx.strokeStyle = isMain ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = isMain ? 2 : 1;
+
+      ctx.beginPath();
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, height);
+      ctx.stroke();
+
+      if (isMain && x > 0 && x < 100) {
+        ctx.fillStyle = '#E6A100';
+        ctx.fillText(`x:${x}%`, px + 5, 30);
+        ctx.fillText(`x:${x}%`, px + 5, height - 20);
+      }
+    }
+
+    // 横線（縦軸 %）
+    for (let y = 0; y <= 100; y += 5) {
+      const py = (y / 100) * height;
+      const isMain = y % 10 === 0;
+
+      ctx.strokeStyle = isMain ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = isMain ? 2 : 1;
+
+      ctx.beginPath();
+      ctx.moveTo(0, py);
+      ctx.lineTo(width, py);
+      ctx.stroke();
+
+      if (isMain && y > 0 && y < 100) {
+        ctx.fillStyle = '#E6A100';
+        ctx.fillText(`y:${y}%`, 10, py - 8);
+        ctx.fillText(`y:${y}%`, width - 80, py - 8);
+      }
+    }
+
+    // 外枠
+    ctx.strokeStyle = '#D00000';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(0, 0, width, height);
+
+    function downloadPNG() {
+      const link = document.createElement('a');
+      link.download = 'grid_1080x1500.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>

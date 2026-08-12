@@ -54,80 +54,79 @@
       background-position: center;
     }
 
-    /* カメラ位置ボタンのスタイル（📷 + 2桁番号） */
-    .spot-pin {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      background-color: rgba(208, 0, 0, 0.9); /* 赤系ベース */
-      color: #F7F4EF;
-      border: 2px solid #E6A100; /* 金/黄枠 */
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      white-space: nowrap;
-      cursor: pointer;
-      z-index: 10;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      transition: transform 0.2s ease, filter 0.2s ease;
-      
-      /* じんわり点滅のアニメーション適用 */
-      animation: pulse 2.5s infinite ease-in-out;
-    }
+/* カメラ位置ボタンのスタイル（📷 + 2桁番号） */
+.spot-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: rgba(208, 0, 0, 0.95); /* 赤系ベース */
+  color: #F7F4EF;
+  border: 2px solid #E6A100; /* 金/黄枠 */
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  
+  /* 透過0%〜100%の点滅（3秒周期） */
+  animation: pulse 3s infinite ease-in-out;
+}
 
-    /* じんわり点滅（フェード＆微拡大＆光彩）キーフレーム */
-    @keyframes pulse {
-      0% {
-        opacity: 0.82;
-        transform: translate(-50%, -50%) scale(0.96);
-        box-shadow: 0 0 4px rgba(230, 161, 0, 0.4);
-      }
-      50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.08);
-        box-shadow: 0 0 12px rgba(230, 161, 0, 0.9);
-      }
-      100% {
-        opacity: 0.82;
-        transform: translate(-50%, -50%) scale(0.96);
-        box-shadow: 0 0 4px rgba(230, 161, 0, 0.4);
-      }
-    }
+/* 透過0%〜100%の点滅キーフレーム */
+@keyframes pulse {
+  0% {
+    opacity: 0; /* 完全透明 */
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  50% {
+    opacity: 1; /* 不透明 100% */
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 12px rgba(230, 161, 0, 0.9);
+  }
+  100% {
+    opacity: 0; /* 完全透明 */
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
 
-    /* ホバー時は拡大して強調（アニメーション一時停止） */
-    .spot-pin:hover {
-      animation-play-state: paused;
-      transform: translate(-50%, -50%) scale(1.25);
-      background-color: #D00000;
-      z-index: 20;
-      box-shadow: 0 0 16px rgba(255, 215, 0, 1);
-    }
+/* ホバー時は不透明（100%）に固定して拡大 */
+.spot-pin:hover {
+  animation-play-state: paused;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.25);
+  background-color: #D00000;
+  z-index: 20;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 1);
+}
 
-    /* ツールチップ（スポット名表示） */
-    .spot-pin::after {
-      content: attr(data-name);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.88);
-      color: #fff;
-      padding: 4px 8px;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
+/* ツールチップ（スポット名表示） */
+.spot-pin::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.88);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
 
-    .spot-pin:hover::after {
-      opacity: 1;
-    }
+.spot-pin:hover::after {
+  opacity: 1;
+}
   </style>
 </head>
 <body>
@@ -200,27 +199,27 @@
       ]
     };
 
-    // DOM要素の生成と初期化
-    document.addEventListener('DOMContentLoaded', () => {
-      const mapContainer = document.getElementById('mapContainer');
+// DOM要素の生成と初期化
+document.addEventListener('DOMContentLoaded', () => {
+  const mapContainer = document.getElementById('mapContainer');
 
-      // ピン（📷XX ボタン）を動的に28箇所生成
-      mapConfig.spots.forEach(spot => {
-        const pin = document.createElement('a');
-        pin.className = 'spot-pin';
-        pin.style.left = spot.x + '%';
-        pin.style.top = spot.y + '%';
-        
-        // IDを2桁ゼロ埋め表記（例: 1 -> 01）
-        const formattedId = String(spot.id).padStart(2, '0');
-        pin.textContent = `📷${formattedId}`;
-        
-        pin.setAttribute('data-name', spot.name);
-        pin.href = spot.url;
+  // ピン（📷XX ボタン）を動的に28箇所生成
+  mapConfig.spots.forEach(spot => {
+    const pin = document.createElement('a');
+    pin.className = 'spot-pin';
+    pin.style.left = spot.x + '%';
+    pin.style.top = spot.y + '%';
+    
+    // IDを2桁ゼロ埋め表記（例: 1 -> 📷01）
+    const formattedId = String(spot.id).padStart(2, '0');
+    pin.textContent = `📷${formattedId}`;
+    
+    pin.setAttribute('data-name', spot.name);
+    pin.href = spot.url;
 
-        mapContainer.appendChild(pin);
-      });
-    });
+    mapContainer.appendChild(pin);
+  });
+});
   </script>
 
 

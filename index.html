@@ -33,7 +33,7 @@
       color: #f3f3f3;
     }
 
-    /* 全体マップコンテナ（縦長画像に合わせてmax-widthを調整） */
+    /* 全体マップコンテナ（1080x1500 アスペクト比対応） */
     .map-wrapper {
       position: relative;
       width: 100%;
@@ -54,59 +54,75 @@
       background-position: center;
     }
 
-    /* ピンのスタイル */
+    /* カメラ位置ボタンのスタイル（📷 + 2桁番号） */
     .spot-pin {
       position: absolute;
-      width: 36px;
-      height: 36px;
-      margin-left: -18px;
-      margin-top: -36px;
-      background-image: url('images/pin.webp');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      cursor: pointer;
-      transition: transform 0.2s ease, filter 0.2s ease;
-      z-index: 10;
-      text-decoration: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* ピンの番号表示用バッジ */
-    .spot-pin::before {
-      content: attr(data-id);
-      position: absolute;
-      top: 6px;
-      font-size: 11px;
+      transform: translate(-50%, -50%);
+      background-color: rgba(208, 0, 0, 0.9); /* 赤系ベース */
+      color: #F7F4EF;
+      border: 2px solid #E6A100; /* 金/黄枠 */
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
       font-weight: bold;
-      color: #ffffff;
-      text-shadow: 0px 1px 2px rgba(0,0,0,0.8);
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      
+      /* じんわり点滅のアニメーション適用 */
+      animation: pulse 2.5s infinite ease-in-out;
     }
 
+    /* じんわり点滅（フェード＆微拡大＆光彩）キーフレーム */
+    @keyframes pulse {
+      0% {
+        opacity: 0.82;
+        transform: translate(-50%, -50%) scale(0.96);
+        box-shadow: 0 0 4px rgba(230, 161, 0, 0.4);
+      }
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.08);
+        box-shadow: 0 0 12px rgba(230, 161, 0, 0.9);
+      }
+      100% {
+        opacity: 0.82;
+        transform: translate(-50%, -50%) scale(0.96);
+        box-shadow: 0 0 4px rgba(230, 161, 0, 0.4);
+      }
+    }
+
+    /* ホバー時は拡大して強調（アニメーション一時停止） */
     .spot-pin:hover {
-      transform: scale(1.25);
-      filter: drop-shadow(0px 4px 8px rgba(0,255,200,0.8));
+      animation-play-state: paused;
+      transform: translate(-50%, -50%) scale(1.25);
+      background-color: #D00000;
+      z-index: 20;
+      box-shadow: 0 0 16px rgba(255, 215, 0, 1);
     }
 
     /* ツールチップ（スポット名表示） */
     .spot-pin::after {
       content: attr(data-name);
       position: absolute;
-      bottom: 100%;
+      bottom: 125%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       color: #fff;
       padding: 4px 8px;
-      font-size: 12px;
+      font-size: 11px;
       border-radius: 4px;
       white-space: nowrap;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.2s ease;
-      margin-bottom: 4px;
     }
 
     .spot-pin:hover::after {
@@ -128,7 +144,6 @@
   <script>
     // ====================================================
     // spot1 ～ spot28 の設定データ
-    // x, y 座標(%)は縦長マップの位置に合わせて数値を調整してください
     // ====================================================
     const mapConfig = {
       spots: [
@@ -167,16 +182,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       const mapContainer = document.getElementById('mapContainer');
 
-      // ピンを動的に28箇所生成
+      // ピン（📷XX ボタン）を動的に28箇所生成
       mapConfig.spots.forEach(spot => {
         const pin = document.createElement('a');
         pin.className = 'spot-pin';
         pin.style.left = spot.x + '%';
         pin.style.top = spot.y + '%';
-        pin.setAttribute('data-id', spot.id);
-        pin.setAttribute('data-name', spot.name);
         
-        // 各リンク先（例: spot1.html）へ直飛び
+        // IDを2桁ゼロ埋め表記（例: 1 -> 01）
+        const formattedId = String(spot.id).padStart(2, '0');
+        pin.textContent = `📷${formattedId}`;
+        
+        pin.setAttribute('data-name', spot.name);
         pin.href = spot.url;
 
         mapContainer.appendChild(pin);
